@@ -474,15 +474,15 @@ app.put("/updateaccount", (req, res) => {
 
 
 //ReadSearchDash
-app.get("/tableadmin", async (req, res) => {
+app.get("/exportalumni", async (req, res) => {
     const page = parseInt(req.query.page) || 0;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 10000000;
     const startIndex = (page - 1) * limit;
     const search = req.query.search;
     const sort_column = req.query.sort_column;
     const sort_direction = req.query.sort_direction;
     var params = [];
-    var sql = 'SELECT * FROM useradmin '
+    var sql = 'SELECT * FROM alumni'
     if (search) {
         sql += ' WHERE CONCAT(id, fname, lname) LIKE ?'
         params.push('%' + search + '%')
@@ -490,6 +490,7 @@ app.get("/tableadmin", async (req, res) => {
     if (sort_column) {
         sql += ' ORDER BY ' + sort_column + ' ' + sort_direction;
     }
+
 
     sql += ' LIMIT ?, ?'
     params.push(startIndex)
@@ -566,38 +567,21 @@ db.query('INSERT INTO alumni (card_id, email, fname, midname, lname, faculty, ma
 })
 
 app.get("/exportalumni", async (req, res) => {
-    const page = parseInt(req.query.page) || 0;
-    const limit = parseInt(req.query.limit) || 10;
-    const startIndex = (page - 1) * limit;
     const search = req.query.search;
-    const sort_column = req.query.sort_column;
-    const sort_direction = req.query.sort_direction;
     var params = [];
     var sql = 'SELECT * FROM alumni '
     if (search) {
         sql += ' WHERE CONCAT(id, fname, lname) LIKE ?'
         params.push('%' + search + '%')
     }
-    if (sort_column) {
-        sql += ' ORDER BY ' + sort_column + ' ' + sort_direction;
-    }
 
-    params.push(startIndex)
-    params.push(limit)
+    console.log(params)
     db.query(sql, params, (err, result) => {
-        db.query('SELECT COUNT(id) as total FROM useradmin', (err, counts, fields) => {
-            const total = counts[0]['total'];
-            const total_pages = Math.ceil(total / limit)
             res.json({
-                page: page,
-                limit: limit,
-                total: total,
-                total_pages: total_pages,
                 data: result
             })
         })
-    })
-});
+    });
 
 
 app.listen(process.env.PORT, jsonParser, () => {
