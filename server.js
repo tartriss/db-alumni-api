@@ -574,12 +574,9 @@ app.get("/exportalumni", async (req, res) => {
         params.push('%' + search + '%')
     }
     db.query(sql, params, (err, result) => {
-            res.json({
-                data: result
-            })
+            res.send(result)
         })
-    })
-;
+    });
 
 
 app.listen(process.env.PORT, jsonParser, () => {
