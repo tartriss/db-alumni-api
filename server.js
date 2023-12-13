@@ -566,35 +566,6 @@ db.query('INSERT INTO alumni (card_id, email, fname, midname, lname, faculty, ma
 
 })
 
-app.get("/exportalumni", async (req, res) => {
-    const page = parseInt(req.query.page) || 0;
-    const limit = parseInt(req.query.limit) || 10000000;
-    const startIndex = (page - 1) * limit;
-    const search = req.query.search;
-    const sort_column = req.query.sort_column;
-    const sort_direction = req.query.sort_direction;
-    var params = [];
-    var sql = 'SELECT * FROM alumni'
-    if (search) {
-        sql += ' WHERE CONCAT( fname, lname) LIKE ?'
-        params.push('%' + search + '%')
-    }
-    if (sort_column) {
-        sql += ' ORDER BY ' + sort_column + ' ' + sort_direction;
-    }
-
-
-    sql += ' LIMIT ?, ?'
-    params.push(startIndex)
-    params.push(limit)
-    db.query(sql, params, (err, result) => {
-            res.json({
-                page: page,
-                limit: limit,
-                data: result
-            })
-        })
-    })
 
 
 app.listen(process.env.PORT, jsonParser, () => {
