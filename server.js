@@ -588,7 +588,7 @@ app.get("/exportalumni", async (req, res) => {
     params.push(startIndex)
     params.push(limit)
     db.query(sql, params, (err, result) => {
-        db.query('SELECT COUNT(id) as total FROM useradmin', (err, counts, fields) => {
+        db.query('SELECT COUNT(id) as total FROM alumni', (err, counts, fields) => {
             const total = counts[0]['total'];
             const total_pages = Math.ceil(total / limit)
             res.json({
