@@ -576,7 +576,7 @@ app.get("/exportalumni", async (req, res) => {
     var params = [];
     var sql = 'SELECT * FROM alumni'
     if (search) {
-        sql += ' WHERE CONCAT(id, fname, lname) LIKE ?'
+        sql += ' WHERE CONCAT( fname, lname) LIKE ?'
         params.push('%' + search + '%')
     }
     if (sort_column) {
@@ -588,19 +588,13 @@ app.get("/exportalumni", async (req, res) => {
     params.push(startIndex)
     params.push(limit)
     db.query(sql, params, (err, result) => {
-        db.query('SELECT COUNT(id) as total FROM alumni', (err, counts, fields) => {
-            const total = counts[0]['total'];
-            const total_pages = Math.ceil(total / limit)
             res.json({
                 page: page,
                 limit: limit,
-                total: total,
-                total_pages: total_pages,
                 data: result
             })
         })
     })
-});
 
 
 app.listen(process.env.PORT, jsonParser, () => {
