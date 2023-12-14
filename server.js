@@ -602,6 +602,41 @@ app.get("/exportalumni", async (req, res) => {
     })
 });
 
+app.get("/setexportalumni", async (req, res) => {
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
+    const search = req.query.search;
+    const sort_column = req.query.sort_column;
+    const sort_direction = req.query.sort_direction;
+    var params = [];
+    var sql = 'SELECT * FROM alumni '
+    if (search) {
+        sql += ' WHERE CONCAT(fname, lname) LIKE ?'
+        params.push('%' + search + '%')
+    }
+    if (sort_column) {
+        sql += ' ORDER BY ' + sort_column + ' ' + sort_direction;
+    }
+
+    sql += ' LIMIT ?, ?'
+    params.push(startIndex)
+    params.push(limit)
+    db.query(sql, params, (err, result) => {
+        db.query('SELECT COUNT(alumni_id) as total FROM alumni', (err, counts, fields) => {
+            const total = counts[0]['total'];
+            const total_pages = Math.ceil(total / limit)
+            res.json({
+                page: page,
+                limit: limit,
+                total: total,
+                total_pages: total_pages,
+                data: result
+            })
+        })
+    })
+});
+
 
 app.listen(process.env.PORT, jsonParser, () => {
     console.log('RUN PORT 3000')
