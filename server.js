@@ -576,7 +576,7 @@ app.get("/exportalumni", async (req, res) => {
     var params = [];
     var sql = 'SELECT * FROM alumni'
     if (search) {
-        sql += ' WHERE CONCAT( fname, lname) LIKE ?'
+        sql += ' WHERE CONCAT( fname, lname, certificates, statuscareer) LIKE ?'
         params.push('%' + search + '%')
     }
     if (sort_column) {
@@ -612,7 +612,7 @@ app.get("/setexportalumni", async (req, res) => {
     var params = [];
     var sql = 'SELECT * FROM alumni '
     if (search) {
-        sql += ' WHERE CONCAT(fname, lname) LIKE ?'
+        sql += ' WHERE CONCAT( fname, lname, certificates, statuscareer) LIKE ?'
         params.push('%' + search + '%')
     }
     if (sort_column) {
